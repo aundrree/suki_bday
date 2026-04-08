@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Suki! 🌊💙</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: #3b828e;
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            color: #333;
+        }
+
+        /* --- Full View Video Background --- */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #3b828e;
+        }
+
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+
+        /* --- Scratch/Tear Overlay --- */
+        #scratch-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        #scratch-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .scratch-instruction {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            color: #1b3045;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            pointer-events: none;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
+
+        /* App Container */
+        #app {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            z-index: 10;
+            perspective: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .stage {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: scale(0.7) translateY(50px);
+        }
+
+        .stage.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: scale(1) translateY(0);
+        }
+
+        .stage.animating-out {
+            opacity: 0;
+            transform: scale(1.2) translateY(-100px);
+            pointer-events: none;
+        }
+
+        /* UI Elements */
+        .instruction {
+            color: #1b3045;
+            margin-top: 40px;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* --- STAGE 1: Bubbles --- */
+        .bubble-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+            animation: float-up var(--duration) linear forwards;
+        }
+
+        .bubble:active {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            from { transform: translateY(110vh); }
+            to { transform: translateY(-20vh); }
+        }
+
+        .bubble-pop-effect {
+            position: absolute;
+            pointer-events: none;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: pop-particle 0.4s ease-out forwards;
+        }
+
+        @keyframes pop-particle {
+            to {
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* --- STAGE 2: The Indigo Box --- */
+        .gift-box {
+            width: 200px;
+            height: 160px;
+            background: linear-gradient(135deg, #2c425e, #1b3045);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+        .gift-box-lid {
+            position: absolute;
+            top: -12px; left: -5px;
+            width: 210px; height: 45px;
+            background: linear-gradient(135deg, #3b5a7d, #2c425e);
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+        }
+
+        /* --- STAGE 2.5: Collage of Photos --- */
+        .photo-collage-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .photo-frame {
+            width: 190px;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid #ddd;
+            position: absolute;
+            opacity: 0;
+            transform: scale(0.5) translate(0, 50px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .photo-frame.pop {
+            opacity: 1;
+            transform: scale(1) translate(var(--x), var(--y)) rotate(var(--r));
+        }
+
+        .photo-img {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .photo-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- STAGE 3: The Mobile Card --- */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            width: 90%;
+            max-width: 450px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            border: 10px solid transparent;
+            border-image: linear-gradient(to bottom, #1b3045, #3b828e) 1;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .card h1 {
+            font-family: 'Dancing Script', cursive;
+            color: #1b3045;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+        .card p {
+            font-size: 1rem;
+            color: #444;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        .card-signature {
+            margin-top: 20px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.3rem;
+            color: #3b828e;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Scratch Paper Layer -->
+    <div id="scratch-container">
+        <div class="scratch-instruction" id="scratch-text">Scratch to unwrap Suki's gift! ✨</div>
+        <canvas id="scratch-canvas"></canvas>
+    </div>
+
+    <div class="video-background">
+        <video autoplay muted loop playsinline id="bg-video">
+            <source src="bgnow.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <div id="app">
+        <!-- STAGE 1: BUBBLES -->
+        <div class="stage" id="stage-1">
+            <div class="bubble-container" id="bubble-field"></div>
+            <div class="instruction">Pop the bubbles to find the gift! 🫧</div>
+        </div>
+
+        <!-- STAGE 2: THE BOX -->
+        <div class="stage" id="stage-2" onclick="nextStage(2)">
+            <div class="gift-box">
+                <div class="gift-box-lid"></div>
+            </div>
+            <div class="instruction">Open Suki's box! 🎁</div>
+        </div>
+
+        <!-- STAGE 2.5: PHOTO COLLAGE -->
+        <div class="stage" id="stage-2-5" onclick="nextStage('2-5')">
+            <div class="photo-collage-container" id="collage">
+                <!-- 7 Photos will be injected here by JS -->
+            </div>
+            <div class="instruction" id="collage-instruction">Enjoy the show... ⚓</div>
+        </div>
+
+        <!-- STAGE 3: CARD -->
+        <div class="stage" id="stage-3">
+            <div class="card">
+                <h1>Happy Birthday, Sukitoo! </h1>
+                <p>To my favorite !</p>
+                <p>Wishing you the happiest birthday.</p>
+                <p>Always keep being urself.</p>
+                <div class="card-signature">...<br>dont do anything 4daLolz</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- State ---
+        let collageFinished = false;
+        let bubblesPopped = 0;
+        let bubblesSpawned = 0;
+        const bubblesRequired = 5; 
+
+        // --- Configuration ---
+        const photoData = [
+            { src: 'suki_aundre1.jpg', x: '-70px', y: '-90px', r: '-12deg' },
+            { src: 'suki_aundre2.jpg', x: '80px', y: '-100px', r: '10deg' },
+            { src: 'suki_aundre3.jpg', x: '-50px', y: '10px', r: '5deg' },
+            { src: 'suki_aundre4.jpg', x: '60px', y: '90px', r: '-8deg' },
+            { src: 'suki_aundre5.jpg', x: '-90px', y: '110px', r: '15deg' },
+            { src: 'suki_aundre6.jpg', x: '10px', y: '-20px', r: '-3deg' },
+            { src: 'suki_aundre7.jpg', x: '30px', y: '140px', r: '4deg' }
+        ];
+
+        // --- Scratch Canvas Logic ---
+        const canvas = document.getElementById('scratch-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('scratch-container');
+        const instructionText = document.getElementById('scratch-text');
+        let isDrawing = false;
+        let scratchedPixels = 0;
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            ctx.fillStyle = '#3b828e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            for(let i=0; i<canvas.width; i+=40) {
+                for(let j=0; j<canvas.height; j+=40) {
+                    ctx.beginPath(); ctx.arc(i, j, 2, 0, Math.PI*2); ctx.fill();
+                }
+            }
+            ctx.fillStyle = '#1b3045';
+            ctx.fillRect(canvas.width/2 - 25, 0, 50, canvas.height);
+            ctx.fillRect(0, canvas.height/2 - 25, canvas.width, 50);
+        }
+
+        function scratch(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+            const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath(); ctx.arc(x, y, 45, 0, Math.PI * 2); ctx.fill();
+            scratchedPixels++;
+            if (scratchedPixels > 10) instructionText.style.opacity = '0';
+            if (scratchedPixels > 180) revealApp();
+        }
+
+        function revealApp() {
+            container.style.transition = 'opacity 1s ease, transform 1s ease';
+            container.style.opacity = '0';
+            container.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                container.style.display = 'none';
+                document.getElementById('app').style.pointerEvents = 'all';
+                document.getElementById('stage-1').classList.add('active');
+                const video = document.getElementById('bg-video');
+                video.playbackRate = 0.5;
+                video.play();
+                createBubbles();
+            }, 1000);
+        }
+
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        canvas.addEventListener('touchstart', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        window.addEventListener('touchend', () => isDrawing = false);
+        canvas.addEventListener('mousemove', scratch);
+        canvas.addEventListener('touchmove', scratch);
+
+        // --- Bubble Logic ---
+        function createBubbles() {
+            const field = document.getElementById('bubble-field');
+            
+            // Create only 5 bubbles total, spawning one by one slowly
+            const interval = setInterval(() => {
+                if (bubblesSpawned >= bubblesRequired) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                bubblesSpawned++;
+                const bubble = document.createElement('div');
+                const size = Math.random() * 40 + 60 + 'px';
+                bubble.className = 'bubble';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = (20 + Math.random() * 60) + 'vw';
+                // Move very slowly: 12-16 seconds to cross screen
+                bubble.style.setProperty('--duration', (Math.random() * 4 + 12) + 's');
+                
+                bubble.onclick = (e) => {
+                    e.stopPropagation();
+                    popBubble(bubble, e.clientX, e.clientY);
+                };
+                
+                field.appendChild(bubble);
+
+                // If a bubble reaches the top without being popped, spawn a replacement
+                bubble.addEventListener('animationend', () => {
+                    if (bubble.parentNode && !collageFinished) {
+                        bubble.remove();
+                        bubblesSpawned--; 
+                        createBubbles(); // Try again
+                    }
+                });
+            }, 1500);
+        }
+
+        function popBubble(el, x, y) {
+            bubblesPopped++;
+            
+            // Visual Particles
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.className = 'bubble-pop-effect';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                p.style.setProperty('--dx', (Math.random() - 0.5) * 120 + 'px');
+                p.style.setProperty('--dy', (Math.random() - 0.5) * 120 + 'px');
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 400);
+            }
+            
+            el.remove();
+
+            // Progress once all 5 are gone
+            if (bubblesPopped >= bubblesRequired) {
+                setTimeout(() => nextStage(1), 800);
+            }
+        }
+
+        // --- App Logic ---
+        function startCollage() {
+            const collage = document.getElementById('collage');
+            photoData.forEach((data, index) => {
+                const frame = document.createElement('div');
+                frame.className = 'photo-frame';
+                frame.style.setProperty('--x', data.x);
+                frame.style.setProperty('--y', data.y);
+                frame.style.setProperty('--r', data.r);
+                frame.style.zIndex = index + 1;
+                
+                frame.innerHTML = `
+                    <div class="photo-img">
+                        <img src="${data.src}" alt="Memory" onerror="this.src='https://via.placeholder.com/150?text=Suki'">
+                    </div>
+                `;
+                collage.appendChild(frame);
+
+                setTimeout(() => {
+                    frame.classList.add('pop');
+                    if (index === photoData.length - 1) {
+                        setTimeout(() => {
+                            collageFinished = true;
+                            document.getElementById('collage-instruction').innerText = "Tap to read your card! ✉️";
+                        }, 800);
+                    }
+                }, 500 + (index * 1000));
+            });
+        }
+
+        function nextStage(currentNum) {
+            // Prevent skipping the collage until animation finishes
+            if (currentNum === '2-5' && !collageFinished) {
+                return;
+            }
+
+            const current = document.getElementById(`stage-${currentNum}`);
+            let nextNum;
+            if (currentNum === 2) nextNum = '2-5';
+            else if (currentNum === '2-5') nextNum = 3;
+            else nextNum = parseInt(currentNum) + 1;
+
+            const next = document.getElementById(`stage-${nextNum}`);
+            if (!current || !next) return;
+
+            current.classList.remove('active');
+            current.classList.add('animating-out');
+            
+            setTimeout(() => {
+                next.classList.add('active');
+                if (nextNum === '2-5') {
+                    startCollage();
+                }
+            }, 600);
+        }
+
+        window.onload = () => {
+            initCanvas();
+            document.getElementById('bg-video').playbackRate = 0.5; 
+        };
+        window.addEventListener('resize', initCanvas);
+    </script>
+</body>
+</html>
