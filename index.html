@@ -67,23 +67,6 @@
             height: 100%;
         }
 
-        .scratch-instruction {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 101;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            color: #1b3045;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            pointer-events: none;
-            text-align: center;
-            transition: opacity 0.5s ease;
-        }
-
         /* App Container */
         #app {
             position: relative;
@@ -123,28 +106,6 @@
             pointer-events: none;
         }
 
-        /* UI Elements */
-        .instruction {
-            color: #1b3045;
-            margin-top: 40px;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: 700;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            animation: pulse 2s infinite;
-            z-index: 50;
-            pointer-events: none;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
         /* --- STAGE 1: Bubbles --- */
         .bubble-container {
             position: absolute;
@@ -157,18 +118,13 @@
 
         .bubble {
             position: absolute;
-            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: radial-gradient(circle at 30% 30%, rgba(173, 216, 230, 0.6), rgba(0, 191, 255, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.4);
             border-radius: 50%;
-            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
-            cursor: pointer;
+            box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.6);
+            pointer-events: none; 
             transition: transform 0.2s ease-out, opacity 0.2s ease-out;
             animation: float-up var(--duration) linear forwards;
-        }
-
-        .bubble:active {
-            transform: scale(1.5);
-            opacity: 0;
         }
 
         @keyframes float-up {
@@ -179,9 +135,9 @@
         .bubble-pop-effect {
             position: absolute;
             pointer-events: none;
-            width: 2px;
-            height: 2px;
-            background: white;
+            width: 3px;
+            height: 3px;
+            background: #b9e9ff;
             border-radius: 50%;
             animation: pop-particle 0.4s ease-out forwards;
         }
@@ -193,22 +149,82 @@
             }
         }
 
-        /* --- STAGE 2: The Indigo Box --- */
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: ripple-animation 1s ease-out forwards;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes ripple-animation {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            to {
+                width: 250px;
+                height: 250px;
+                opacity: 0;
+            }
+        }
+
+        /* --- STAGE 2: Custom Navy Gift Box with Turtles --- */
         .gift-box {
             width: 200px;
             height: 160px;
-            background: linear-gradient(135deg, #2c425e, #1b3045);
-            border-radius: 10px;
+            background-color: #1c3252;
+            /* Turtle pattern using SVG background */
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10c2 0 3 1 3 3s-1 2-1 3c0 1 1 1 2 1s2-1 3-1 1 1 1 2-1 2-2 2h-6c-1 0-2 0-2-2s0-1 1-2 2 1 3 1 1-1 2-1-2-1-2-1 1-2 1-3-1-3-3-3z' fill='%23ffffff' fill-opacity='0.15'/%3E%3C/svg%3E");
+            border-radius: 4px;
             position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            cursor: pointer;
         }
+        
+        /* Ribbon */
+        .gift-box::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1;
+        }
+
         .gift-box-lid {
             position: absolute;
-            top: -12px; left: -5px;
-            width: 210px; height: 45px;
-            background: linear-gradient(135deg, #3b5a7d, #2c425e);
+            top: -15px; left: -10px;
+            width: 220px; height: 40px;
+            background-color: #1c3252;
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10c2 0 3 1 3 3s-1 2-1 3c0 1 1 1 2 1s2-1 3-1 1 1 1 2-1 2-2 2h-6c-1 0-2 0-2-2s0-1 1-2 2 1 3 1 1-1 2-1-2-1-2-1 1-2 1-3-1-3-3-3z' fill='%23ffffff' fill-opacity='0.2'/%3E%3C/svg%3E");
             border-radius: 6px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 2;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        /* Ribbon on lid */
+        .gift-box-lid::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .gift-box.open .gift-box-lid {
+            transform: translateY(-100px) rotate(-15deg) scale(1.1);
+            opacity: 0;
         }
 
         /* --- STAGE 2.5: Collage of Photos --- */
@@ -255,6 +271,14 @@
             object-fit: cover;
         }
 
+        /* Special fit for photo 4 */
+        .photo-img.fit-contain {
+            background: black;
+        }
+        .photo-img.fit-contain img {
+            object-fit: contain;
+        }
+
         /* --- STAGE 3: The Mobile Card --- */
         .card {
             background: rgba(255, 255, 255, 0.95);
@@ -295,7 +319,6 @@
 
     <!-- Scratch Paper Layer -->
     <div id="scratch-container">
-        <div class="scratch-instruction" id="scratch-text">Scratch to unwrap Suki's gift! ✨</div>
         <canvas id="scratch-canvas"></canvas>
     </div>
 
@@ -307,35 +330,33 @@
 
     <div id="app">
         <!-- STAGE 1: BUBBLES -->
-        <div class="stage" id="stage-1">
+        <div class="stage" id="stage-1" onclick="handleStageClick(event, 1)">
             <div class="bubble-container" id="bubble-field"></div>
-            <div class="instruction">Pop the bubbles to find the gift! 🫧</div>
         </div>
 
-        <!-- STAGE 2: THE BOX -->
-        <div class="stage" id="stage-2" onclick="nextStage(2)">
-            <div class="gift-box">
+        <!-- STAGE 2: THE CUSTOM BOX -->
+        <div class="stage" id="stage-2" onclick="handleStageClick(event, 2)">
+            <div class="gift-box" id="main-gift-box">
                 <div class="gift-box-lid"></div>
             </div>
-            <div class="instruction">Open Suki's box! 🎁</div>
         </div>
 
         <!-- STAGE 2.5: PHOTO COLLAGE -->
-        <div class="stage" id="stage-2-5" onclick="nextStage('2-5')">
+        <div class="stage" id="stage-2-5" onclick="handleStageClick(event, '2-5')">
             <div class="photo-collage-container" id="collage">
                 <!-- 7 Photos will be injected here by JS -->
             </div>
-            <div class="instruction" id="collage-instruction">Enjoy the show... ⚓</div>
         </div>
 
         <!-- STAGE 3: CARD -->
-        <div class="stage" id="stage-3">
+        <div class="stage" id="stage-3" onclick="handleStageClick(event)">
             <div class="card">
                 <h1>Happy Birthday, Sukitoo! </h1>
-                <p>To my favorite !</p>
-                <p>Wishing you the happiest birthday.</p>
+                <p>i hope u have an amazing birthdayyy!</p>
+                <p>hope u achieve everything u wanna achieve this year</p>
                 <p>Always keep being urself.</p>
-                <div class="card-signature">...<br>dont do anything 4daLolz</div>
+                <div class="card-signature">please lemme know what u want<br> & dont do anything 4daLolz<br>  </div>
+                <br> &lt;3&lt;3&lt;3
             </div>
         </div>
     </div>
@@ -343,16 +364,16 @@
     <script>
         // --- State ---
         let collageFinished = false;
-        let bubblesPopped = 0;
+        let screenTaps = 0;
         let bubblesSpawned = 0;
-        const bubblesRequired = 5; 
+        const tapsRequired = 2; 
 
         // --- Configuration ---
         const photoData = [
             { src: 'suki_aundre1.jpg', x: '-70px', y: '-90px', r: '-12deg' },
             { src: 'suki_aundre2.jpg', x: '80px', y: '-100px', r: '10deg' },
             { src: 'suki_aundre3.jpg', x: '-50px', y: '10px', r: '5deg' },
-            { src: 'suki_aundre4.jpg', x: '60px', y: '90px', r: '-8deg' },
+            { src: 'suki_aundre4.jpg', x: '60px', y: '90px', r: '-8deg', fit: 'contain' },
             { src: 'suki_aundre5.jpg', x: '-90px', y: '110px', r: '15deg' },
             { src: 'suki_aundre6.jpg', x: '10px', y: '-20px', r: '-3deg' },
             { src: 'suki_aundre7.jpg', x: '30px', y: '140px', r: '4deg' }
@@ -362,7 +383,6 @@
         const canvas = document.getElementById('scratch-canvas');
         const ctx = canvas.getContext('2d');
         const container = document.getElementById('scratch-container');
-        const instructionText = document.getElementById('scratch-text');
         let isDrawing = false;
         let scratchedPixels = 0;
 
@@ -390,12 +410,11 @@
             ctx.globalCompositeOperation = 'destination-out';
             ctx.beginPath(); ctx.arc(x, y, 45, 0, Math.PI * 2); ctx.fill();
             scratchedPixels++;
-            if (scratchedPixels > 10) instructionText.style.opacity = '0';
             if (scratchedPixels > 180) revealApp();
         }
 
         function revealApp() {
-            container.style.transition = 'opacity 1s ease, transform 1s ease';
+            container.style.transition = 'opacity 1.0s ease, transform 1.0s ease';
             container.style.opacity = '0';
             container.style.transform = 'scale(1.2)';
             setTimeout(() => {
@@ -419,46 +438,37 @@
         // --- Bubble Logic ---
         function createBubbles() {
             const field = document.getElementById('bubble-field');
-            
-            // Create only 5 bubbles total, spawning one by one slowly
             const interval = setInterval(() => {
-                if (bubblesSpawned >= bubblesRequired) {
+                if (bubblesSpawned >= 8) { 
                     clearInterval(interval);
                     return;
                 }
-                
                 bubblesSpawned++;
                 const bubble = document.createElement('div');
                 const size = Math.random() * 40 + 60 + 'px';
                 bubble.className = 'bubble';
                 bubble.style.width = size;
                 bubble.style.height = size;
-                bubble.style.left = (20 + Math.random() * 60) + 'vw';
-                // Move very slowly: 12-16 seconds to cross screen
-                bubble.style.setProperty('--duration', (Math.random() * 4 + 12) + 's');
-                
-                bubble.onclick = (e) => {
-                    e.stopPropagation();
-                    popBubble(bubble, e.clientX, e.clientY);
-                };
-                
+                bubble.style.left = (Math.random() * 90) + 'vw';
+                bubble.style.setProperty('--duration', (Math.random() * 4 + 10) + 's');
                 field.appendChild(bubble);
-
-                // If a bubble reaches the top without being popped, spawn a replacement
-                bubble.addEventListener('animationend', () => {
-                    if (bubble.parentNode && !collageFinished) {
-                        bubble.remove();
-                        bubblesSpawned--; 
-                        createBubbles(); // Try again
-                    }
-                });
-            }, 1500);
+                bubble.addEventListener('animationend', () => bubble.remove());
+            }, 1000);
         }
 
-        function popBubble(el, x, y) {
-            bubblesPopped++;
-            
-            // Visual Particles
+        function handleStageClick(e, currentNum) {
+            const x = e.clientX || (e.touches && e.touches[0].clientX);
+            const y = e.clientY || (e.touches && e.touches[0].clientY);
+
+            // 1. Ripple Effect
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 1000);
+
+            // 2. Pop particles
             for (let i = 0; i < 8; i++) {
                 const p = document.createElement('div');
                 p.className = 'bubble-pop-effect';
@@ -469,12 +479,20 @@
                 document.body.appendChild(p);
                 setTimeout(() => p.remove(), 400);
             }
-            
-            el.remove();
 
-            // Progress once all 5 are gone
-            if (bubblesPopped >= bubblesRequired) {
-                setTimeout(() => nextStage(1), 800);
+            // 3. Handle Transitions
+            if (currentNum === 1) {
+                screenTaps++;
+                if (screenTaps >= tapsRequired) {
+                    setTimeout(() => nextStage(1), 500);
+                }
+            } else if (currentNum === 2) {
+                // Open Box Animation
+                const box = document.getElementById('main-gift-box');
+                box.classList.add('open');
+                setTimeout(() => nextStage(2), 800);
+            } else if (currentNum === '2-5') {
+                if (collageFinished) nextStage('2-5');
             }
         }
 
@@ -488,56 +506,40 @@
                 frame.style.setProperty('--y', data.y);
                 frame.style.setProperty('--r', data.r);
                 frame.style.zIndex = index + 1;
-                
+                const fitClass = data.fit === 'contain' ? 'fit-contain' : '';
                 frame.innerHTML = `
-                    <div class="photo-img">
+                    <div class="photo-img ${fitClass}">
                         <img src="${data.src}" alt="Memory" onerror="this.src='https://via.placeholder.com/150?text=Suki'">
                     </div>
                 `;
                 collage.appendChild(frame);
-
                 setTimeout(() => {
                     frame.classList.add('pop');
                     if (index === photoData.length - 1) {
-                        setTimeout(() => {
-                            collageFinished = true;
-                            document.getElementById('collage-instruction').innerText = "Tap to read your card! ✉️";
-                        }, 800);
+                        setTimeout(() => collageFinished = true, 800);
                     }
-                }, 500 + (index * 1000));
+                }, 500 + (index * 800));
             });
         }
 
         function nextStage(currentNum) {
-            // Prevent skipping the collage until animation finishes
-            if (currentNum === '2-5' && !collageFinished) {
-                return;
-            }
-
+            if (currentNum === '2-5' && !collageFinished) return;
             const current = document.getElementById(`stage-${currentNum}`);
             let nextNum;
             if (currentNum === 2) nextNum = '2-5';
             else if (currentNum === '2-5') nextNum = 3;
             else nextNum = parseInt(currentNum) + 1;
-
             const next = document.getElementById(`stage-${nextNum}`);
             if (!current || !next) return;
-
             current.classList.remove('active');
             current.classList.add('animating-out');
-            
             setTimeout(() => {
                 next.classList.add('active');
-                if (nextNum === '2-5') {
-                    startCollage();
-                }
+                if (nextNum === '2-5') startCollage();
             }, 600);
         }
 
-        window.onload = () => {
-            initCanvas();
-            document.getElementById('bg-video').playbackRate = 0.5; 
-        };
+        window.onload = initCanvas;
         window.addEventListener('resize', initCanvas);
     </script>
 </body>
